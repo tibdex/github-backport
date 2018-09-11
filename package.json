@@ -1,0 +1,56 @@
+{
+  "author": "Thibault Derousseaux <tibdex@gmail.com>",
+  "dependencies": {
+    "debug": "^3.1.0",
+    "github-cherry-pick": "^0.1.11",
+    "shared-github-internals": "^0.1.4"
+  },
+  "description": "Backport a pull request using the GitHub REST API",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "babel-eslint": "^8.2.6",
+    "babel-jest": "^23.4.2",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-flow": "^6.23.0",
+    "eslint": "^5.3.0",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-plugin-flowtype": "^2.50.0",
+    "eslint-plugin-import": "^2.13.0",
+    "eslint-plugin-security": "^1.4.0",
+    "eslint-plugin-unicorn": "^5.0.0",
+    "flow-bin": "^0.78.0",
+    "flow-copy-source": "^2.0.2",
+    "flow-typed": "^2.4.0",
+    "jest": "^23.4.2",
+    "jest-junit": "^5.1.0",
+    "prettier": "^1.14.2"
+  },
+  "engines": {
+    "node": ">= 6.11.2"
+  },
+  "files": [
+    "lib/"
+  ],
+  "keywords": [
+    "git",
+    "github",
+    "github-rest-v3",
+    "pull-request",
+    "backport"
+  ],
+  "license": "MIT",
+  "main": "lib",
+  "name": "github-backport",
+  "repository": "github:tibdex/github-backport",
+  "scripts": {
+    "build": "babel src --out-dir lib && flow-copy-source src lib",
+    "eslint": "eslint . --max-warnings 0",
+    "flow": "flow",
+    "flow-typed": "flow-typed",
+    "prepublishOnly": "yarn build",
+    "prettier": "prettier \"**/*.{js,json,md,yml}\"",
+    "test": "jest"
+  },
+  "version": "0.1.0"
+}
