@@ -5,6 +5,8 @@
 
 `github-backport` backports a pull request using the GitHub REST API.
 
+See [Backport](https://github.com/tibdex/backport) to backport a pull request by simply commenting it.
+
 # Usage
 
 ```javascript
@@ -39,7 +41,7 @@ backportPullRequest({
 
 ## Troubleshooting
 
-`github-backport` uses [`debug`](https://www.npmjs.com/package/debug) to log helpful information at different steps of the cherry-picking process. To enable these logs, set the `DEBUG` environment variable to `github-backport`.
+`github-backport` uses [`debug`](https://www.npmjs.com/package/debug) to log helpful information at different steps of the backport process. To enable these logs, set the `DEBUG` environment variable to `github-backport`.
 
 # How it Works
 
@@ -107,5 +109,5 @@ To backport `#1337` to `master`, `github-backport` would then take the following
 ## Atomicity
 
 `github-backport` is atomic.
-It will either successfully cherry-pick all the commits and create the backport pull request or delete the head branch created at the beginning of the backport process.
+It will either successfully cherry-pick all the commits and create the backported pull request or delete the head branch created at the beginning of the backport process.
 There are [tests](tests/index.test.js) for it.
