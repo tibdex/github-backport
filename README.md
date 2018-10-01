@@ -10,7 +10,8 @@ See [Backport](https://github.com/tibdex/backport) to backport a pull request by
 # Usage
 
 ```javascript
-const backportPullRequest = require("github-backport");
+import backportPullRequest from "github-backport";
+// const {default: backportPullRequest} = require("github-backport");
 
 backportPullRequest({
   // The branch upon which the backported pull request should be based.
