@@ -1,21 +1,19 @@
-// @flow strict
-
-import type { Github } from "@octokit/rest";
-import createDebug from "debug";
+import * as Octokit from "@octokit/rest";
+import * as createDebug from "debug";
 import cherryPick from "github-cherry-pick";
 import {
-  type PullRequestNumber,
-  type RepoName,
-  type RepoOwner,
-  type Reference,
-  type Sha,
   createReference,
   deleteReference,
   fetchCommits,
   fetchReferenceSha,
+  PullRequestNumber,
+  Reference,
+  RepoName,
+  RepoOwner,
+  Sha,
 } from "shared-github-internals/lib/git";
 
-import { name as packageName } from "../package";
+const debug = createDebug("github-backport");
 
 type PullRequestBody = string;
 
@@ -27,30 +25,37 @@ const backportPullRequest = async ({
   base,
   body: givenBody,
   head: givenHead,
-  number,
   octokit,
   owner,
+  pullRequestNumber,
   repo,
   title: givenTitle,
 }: {
-  _intercept?: ({ commits: Array<Sha> }) => Promise<void>,
-  base: Reference,
-  body?: PullRequestBody,
-  head?: Reference,
-  number: PullRequestNumber,
-  octokit: Github,
-  owner: RepoOwner,
-  repo: RepoName,
-  title?: PullRequestTitle,
+  _intercept?: ({ commits }: { commits: Sha[] }) => Promise<void>;
+  base: Reference;
+  body?: PullRequestBody;
+  head?: Reference;
+  octokit: Octokit;
+  owner: RepoOwner;
+  pullRequestNumber: PullRequestNumber;
+  repo: RepoName;
+  title?: PullRequestTitle;
 }): Promise<PullRequestNumber> => {
   const {
-    body = `Backport #${number}.`,
-    head = `backport-${number}-on-${base}`,
-    title = `Backport #${number} on ${base}`,
+    body = `Backport #${pullRequestNumber}.`,
+    head = `backport-${pullRequestNumber}-on-${base}`,
+    title = `Backport #${pullRequestNumber} on ${base}`,
   } = { body: givenBody, head: givenHead, title: givenTitle };
 
-  const debug = createDebug(packageName);
-  debug("starting", { base, body, head, number, owner, repo, title });
+  debug("starting", {
+    base,
+    body,
+    head,
+    owner,
+    pullRequestNumber,
+    repo,
+    title,
+  });
 
   const baseSha = await fetchReferenceSha({
     octokit,
@@ -60,7 +65,12 @@ const backportPullRequest = async ({
   });
 
   debug("fetching commits");
-  const commits = await fetchCommits({ number, octokit, owner, repo });
+  const commits = await fetchCommits({
+    octokit,
+    owner,
+    pullRequestNumber,
+    repo,
+  });
 
   debug("creating reference");
   await createReference({
@@ -89,8 +99,8 @@ const backportPullRequest = async ({
       debug("commits could not be cherry-picked", error);
       throw new Error(
         `Commits ${JSON.stringify(
-          commits
-        )} could not be cherry-picked on top of ${base}`
+          commits,
+        )} could not be cherry-picked on top of ${base}`,
       );
     }
     debug("creating pull request");

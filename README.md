@@ -17,21 +17,21 @@ backportPullRequest({
   // The branch upon which the backported pull request should be based.
   base: 'master'
   // The description to give to the backported pull request.
-  // Defaults to: "Backport #{number}."
+  // Defaults to: "Backport #{pullRequestNumber}."
   body: givenBody,
   // The name to give to the head branch of the backported pull request.
-  // Defaults to: "backport-{number}-on-{base}"
+  // Defaults to: "backport-{pullRequestNumber}-on-{base}"
   head: givenHead,
-  // The number of the pull request to backport.
-  number: 1337,
   // An already authenticated instance of https://www.npmjs.com/package/@octokit/rest.
   octokit,
   // The username of the repository owner.
   owner,
+  // The number of the pull request to backport.
+  pullRequestNumber: 1337,
   // The name of the repository.
   repo,
   // The title to give to the backported pull request.
-  // Defaults to: "Backport #{number}"
+  // Defaults to: "Backport #{pullRequestNumber}"
   title: givenTitle,
 }).then(backportedPullRequestNumber => {
   // Do something.

@@ -1,19 +1,26 @@
-// @flow strict
-
+import * as Octokit from "@octokit/rest";
 import {
   deleteReference,
   fetchReferenceSha,
+  PullRequestNumber,
+  Reference,
+  RepoName,
+  RepoOwner,
 } from "shared-github-internals/lib/git";
 import { createTestContext } from "shared-github-internals/lib/tests/context";
 import {
   createPullRequest,
   createReferences,
+  DeleteReferences,
   fetchReferenceCommits,
+  RefsDetails,
 } from "shared-github-internals/lib/tests/git";
 
-import backportPullRequest from "../src";
+import backportPullRequest from ".";
 
-let octokit, owner, repo;
+let octokit: Octokit;
+let owner: RepoOwner;
+let repo: RepoName;
 
 beforeAll(() => {
   ({ octokit, owner, repo } = createTestContext());
@@ -55,17 +62,17 @@ describe("nominal behavior", () => {
     },
   };
 
-  let actualBase,
-    actualBody,
-    actualHead,
-    actualTitle,
-    backportedPullRequestNumber,
-    deleteReferences,
-    featurePullRequestNumber,
-    givenBase,
-    givenBody,
-    givenTitle,
-    refsDetails;
+  let actualBase: Reference;
+  let actualBody: string;
+  let actualHead: Reference;
+  let actualTitle: string;
+  let backportedPullRequestNumber: PullRequestNumber;
+  let deleteReferences: DeleteReferences;
+  let featurePullRequestNumber: PullRequestNumber;
+  let givenBase: Reference;
+  let givenBody: string;
+  let givenTitle: string;
+  let refsDetails: RefsDetails;
 
   beforeAll(async () => {
     ({ deleteReferences, refsDetails } = await createReferences({
@@ -87,9 +94,9 @@ describe("nominal behavior", () => {
     backportedPullRequestNumber = await backportPullRequest({
       base: givenBase,
       body: givenBody,
-      number: featurePullRequestNumber,
       octokit,
       owner,
+      pullRequestNumber: featurePullRequestNumber,
       repo,
       title: givenTitle,
     });
@@ -127,7 +134,7 @@ describe("nominal behavior", () => {
 
   test("head default is respected", () => {
     expect(actualHead).toBe(
-      `backport-${featurePullRequestNumber}-on-${givenBase}`
+      `backport-${featurePullRequestNumber}-on-${givenBase}`,
     );
   });
 
@@ -183,7 +190,9 @@ describe("atomicity", () => {
     },
   };
 
-  let deleteReferences, featurePullRequestNumber, refsDetails;
+  let deleteReferences: DeleteReferences;
+  let featurePullRequestNumber: PullRequestNumber;
+  let refsDetails: RefsDetails;
 
   beforeAll(async () => {
     ({ deleteReferences, refsDetails } = await createReferences({
@@ -225,17 +234,17 @@ describe("atomicity", () => {
           },
           base: refsDetails.dev.ref,
           head,
-          number: featurePullRequestNumber,
           octokit,
           owner,
+          pullRequestNumber: featurePullRequestNumber,
           repo,
-        })
+        }),
       ).rejects.toThrow(/could not be cherry-picked/u);
 
       expect(intercepted).toBeTruthy();
 
       await expect(ensureHeadRefExists()).rejects.toThrow(/Not Found/u);
     },
-    20000
+    20000,
   );
 });
