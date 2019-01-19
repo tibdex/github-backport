@@ -124,4 +124,4 @@ const backportPullRequest = async ({
   }
 };
 
-export default backportPullRequest;
+export { backportPullRequest };
