@@ -1,18 +1,18 @@
 import * as Octokit from "@octokit/rest";
 import {
-  deleteReference,
-  fetchReferenceSha,
+  deleteRef,
+  fetchRefSha,
   PullRequestNumber,
-  Reference,
+  Ref,
   RepoName,
   RepoOwner,
 } from "shared-github-internals/lib/git";
 import { createTestContext } from "shared-github-internals/lib/tests/context";
 import {
   createPullRequest,
-  createReferences,
-  DeleteReferences,
-  fetchReferenceCommits,
+  createRefs,
+  DeleteRefs,
+  fetchRefCommits,
   RefsDetails,
 } from "shared-github-internals/lib/tests/git";
 
@@ -62,20 +62,20 @@ describe("nominal behavior", () => {
     },
   };
 
-  let actualBase: Reference;
+  let actualBase: Ref;
   let actualBody: string;
-  let actualHead: Reference;
+  let actualHead: Ref;
   let actualTitle: string;
   let backportedPullRequestNumber: PullRequestNumber;
-  let deleteReferences: DeleteReferences;
+  let deleteRefs: DeleteRefs;
   let featurePullRequestNumber: PullRequestNumber;
-  let givenBase: Reference;
+  let givenBase: Ref;
   let givenBody: string;
   let givenTitle: string;
   let refsDetails: RefsDetails;
 
   beforeAll(async () => {
-    ({ deleteReferences, refsDetails } = await createReferences({
+    ({ deleteRefs, refsDetails } = await createRefs({
       octokit,
       owner,
       repo,
@@ -107,7 +107,7 @@ describe("nominal behavior", () => {
         head: { ref: actualHead },
         title: actualTitle,
       },
-    } = await octokit.pullRequests.get({
+    } = await octokit.pulls.get({
       number: backportedPullRequestNumber,
       owner,
       repo,
@@ -115,8 +115,8 @@ describe("nominal behavior", () => {
   }, 30000);
 
   afterAll(async () => {
-    await deleteReferences();
-    await deleteReference({
+    await deleteRefs();
+    await deleteRef({
       octokit,
       owner,
       ref: actualHead,
@@ -143,7 +143,7 @@ describe("nominal behavior", () => {
   });
 
   test("commits on the backported pull request are the expected ones", async () => {
-    const actualCommits = await fetchReferenceCommits({
+    const actualCommits = await fetchRefCommits({
       octokit,
       owner,
       ref: actualHead,
@@ -190,12 +190,12 @@ describe("atomicity", () => {
     },
   };
 
-  let deleteReferences: DeleteReferences;
+  let deleteRefs: DeleteRefs;
   let featurePullRequestNumber: PullRequestNumber;
   let refsDetails: RefsDetails;
 
   beforeAll(async () => {
-    ({ deleteReferences, refsDetails } = await createReferences({
+    ({ deleteRefs, refsDetails } = await createRefs({
       octokit,
       owner,
       repo,
@@ -211,40 +211,36 @@ describe("atomicity", () => {
   }, 20000);
 
   afterAll(async () => {
-    await deleteReferences();
+    await deleteRefs();
   });
 
-  test(
-    "whole operation aborted when the commits cannot be cherry-picked",
-    async () => {
-      const head = `backport-${featurePullRequestNumber}-on-${
-        refsDetails.dev.ref
-      }`;
+  test("whole operation aborted when the commits cannot be cherry-picked", async () => {
+    const head = `backport-${featurePullRequestNumber}-on-${
+      refsDetails.dev.ref
+    }`;
 
-      const ensureHeadRefExists = () =>
-        fetchReferenceSha({ octokit, owner, ref: head, repo });
+    const ensureHeadRefExists = () =>
+      fetchRefSha({ octokit, owner, ref: head, repo });
 
-      let intercepted = false;
+    let intercepted = false;
 
-      await expect(
-        backportPullRequest({
-          async _intercept() {
-            await ensureHeadRefExists();
-            intercepted = true;
-          },
-          base: refsDetails.dev.ref,
-          head,
-          octokit,
-          owner,
-          pullRequestNumber: featurePullRequestNumber,
-          repo,
-        }),
-      ).rejects.toThrow(/could not be cherry-picked/u);
+    await expect(
+      backportPullRequest({
+        async _intercept() {
+          await ensureHeadRefExists();
+          intercepted = true;
+        },
+        base: refsDetails.dev.ref,
+        head,
+        octokit,
+        owner,
+        pullRequestNumber: featurePullRequestNumber,
+        repo,
+      }),
+    ).rejects.toThrow(/could not be cherry-picked/u);
 
-      expect(intercepted).toBeTruthy();
+    expect(intercepted).toBeTruthy();
 
-      await expect(ensureHeadRefExists()).rejects.toThrow(/Not Found/u);
-    },
-    20000,
-  );
+    await expect(ensureHeadRefExists()).rejects.toThrow(/Not Found/u);
+  }, 20000);
 });

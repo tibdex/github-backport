@@ -1,5 +1,4 @@
-[![npm version](https://img.shields.io/npm/v/github-backport.svg)](https://npmjs.org/package/github-backport)
-[![build status](https://img.shields.io/circleci/project/github/tibdex/github-backport.svg)](https://circleci.com/gh/tibdex/github-backport)
+[![npm version](https://img.shields.io/npm/v/github-backport.svg)](https://npmjs.org/package/github-backport) [![build status](https://img.shields.io/circleci/project/github/tibdex/github-backport.svg)](https://circleci.com/gh/tibdex/github-backport)
 
 # Goal
 
@@ -10,32 +9,31 @@ See [Backport](https://github.com/tibdex/backport) to backport a pull request by
 # Usage
 
 ```javascript
-import backportPullRequest from "github-backport";
-// const {default: backportPullRequest} = require("github-backport");
+import { backportPullRequest } from "github-backport";
 
-backportPullRequest({
-  // The branch upon which the backported pull request should be based.
-  base: 'master'
-  // The description to give to the backported pull request.
-  // Defaults to: "Backport #{pullRequestNumber}."
-  body: givenBody,
-  // The name to give to the head branch of the backported pull request.
-  // Defaults to: "backport-{pullRequestNumber}-on-{base}"
-  head: givenHead,
-  // An already authenticated instance of https://www.npmjs.com/package/@octokit/rest.
-  octokit,
-  // The username of the repository owner.
-  owner,
-  // The number of the pull request to backport.
-  pullRequestNumber: 1337,
-  // The name of the repository.
-  repo,
-  // The title to give to the backported pull request.
-  // Defaults to: "Backport #{pullRequestNumber}"
-  title: givenTitle,
-}).then(backportedPullRequestNumber => {
-  // Do something.
-});
+const example = async () => {
+  const backportedPullRequestNumber = await backportPullRequest({
+    // The branch upon which the backported pull request should be based.
+    base: "master",
+    // The description to give to the backported pull request.
+    // Defaults to: "Backport #{pullRequestNumber}."
+    body: givenBody,
+    // The name to give to the head branch of the backported pull request.
+    // Defaults to: "backport-{pullRequestNumber}-on-{base}"
+    head: givenHead,
+    // An already authenticated instance of https://www.npmjs.com/package/@octokit/rest.
+    octokit,
+    // The username of the repository owner.
+    owner,
+    // The number of the pull request to backport.
+    pullRequestNumber: 1337,
+    // The name of the repository.
+    repo,
+    // The title to give to the backported pull request.
+    // Defaults to: "Backport #{pullRequestNumber}"
+    title: givenTitle,
+  });
+};
 ```
 
 `github-backport` can run on Node.js and in recent browsers.
