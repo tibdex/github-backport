@@ -1,13 +1,13 @@
 import * as Octokit from "@octokit/rest";
 import * as createDebug from "debug";
-import cherryPick from "github-cherry-pick";
+import { cherryPickCommits } from "github-cherry-pick";
 import {
-  createReference,
-  deleteReference,
+  createRef,
+  deleteRef,
   fetchCommits,
-  fetchReferenceSha,
+  fetchRefSha,
   PullRequestNumber,
-  Reference,
+  Ref,
   RepoName,
   RepoOwner,
   Sha,
@@ -32,9 +32,9 @@ const backportPullRequest = async ({
   title: givenTitle,
 }: {
   _intercept?: ({ commits }: { commits: Sha[] }) => Promise<void>;
-  base: Reference;
+  base: Ref;
   body?: PullRequestBody;
-  head?: Reference;
+  head?: Ref;
   octokit: Octokit;
   owner: RepoOwner;
   pullRequestNumber: PullRequestNumber;
@@ -57,7 +57,7 @@ const backportPullRequest = async ({
     title,
   });
 
-  const baseSha = await fetchReferenceSha({
+  const baseSha = await fetchRefSha({
     octokit,
     owner,
     ref: base,
@@ -73,7 +73,7 @@ const backportPullRequest = async ({
   });
 
   debug("creating reference");
-  await createReference({
+  await createRef({
     octokit,
     owner,
     ref: head,
@@ -87,7 +87,7 @@ const backportPullRequest = async ({
   try {
     try {
       debug("cherry-picking commits", commits);
-      const headSha = await cherryPick({
+      const headSha = await cherryPickCommits({
         commits,
         head,
         octokit,
@@ -106,7 +106,7 @@ const backportPullRequest = async ({
     debug("creating pull request");
     const {
       data: { number: backportedPullRequestNumber },
-    } = await octokit.pullRequests.create({
+    } = await octokit.pulls.create({
       base,
       body,
       head,
@@ -118,7 +118,7 @@ const backportPullRequest = async ({
     return backportedPullRequestNumber;
   } catch (error) {
     debug("rollbacking reference creation", error);
-    await deleteReference({ octokit, owner, ref: head, repo });
+    await deleteRef({ octokit, owner, ref: head, repo });
     debug("reference creation rollbacked");
     throw error;
   }
