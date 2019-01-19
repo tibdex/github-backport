@@ -16,7 +16,7 @@ import {
   RefsDetails,
 } from "shared-github-internals/lib/tests/git";
 
-import backportPullRequest from ".";
+import { backportPullRequest } from ".";
 
 let octokit: Octokit;
 let owner: RepoOwner;
