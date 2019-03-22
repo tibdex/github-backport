@@ -30,7 +30,7 @@ const example = async () => {
     // The name of the repository.
     repo,
     // The title to give to the backported pull request.
-    // Defaults to: "Backport #{pullRequestNumber}"
+    // Defaults to: "Backport #{pullRequestNumber} on {base}: {original pull request title}"
     title: givenTitle,
   });
 };

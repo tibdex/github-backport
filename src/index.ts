@@ -42,9 +42,17 @@ const backportPullRequest = async ({
   title?: PullRequestTitle;
 }): Promise<PullRequestNumber> => {
   const {
+    data: { title: originalTitle },
+  } = await octokit.pulls.get({
+    number: pullRequestNumber,
+    owner,
+    repo,
+  });
+
+  const {
     body = `Backport #${pullRequestNumber}.`,
     head = `backport-${pullRequestNumber}-on-${base}`,
-    title = `Backport #${pullRequestNumber} on ${base}`,
+    title = `Backport #${pullRequestNumber} on ${base}: ${originalTitle}`,
   } = { body: givenBody, head: givenHead, title: givenTitle };
 
   debug("starting", {
