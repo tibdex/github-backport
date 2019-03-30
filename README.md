@@ -90,7 +90,7 @@ To backport `#1337` to `master`, `github-backport` would then take the following
     * b3c3b70 (dev) B
     * 55356b7 (HEAD -> backport-1337-to-master, master) A
     ```
-3.  Cherry-pick `8a846f6` and `0d40af8` to `backport-1337-to-master` with [`github-cherry-pick`](https://www.npmjs.com/package/github-cherry-pick).
+3.  Cherry-pick `8a846f6` and `0d40af8` on `backport-1337-to-master` with [`github-cherry-pick`](https://www.npmjs.com/package/github-cherry-pick).
     <!--
     git cherry-pick 8a846f6 0d40af8
     -->
