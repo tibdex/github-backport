@@ -51,8 +51,8 @@ const backportPullRequest = async ({
 
   const {
     body = `Backport #${pullRequestNumber}.`,
-    head = `backport-${pullRequestNumber}-on-${base}`,
-    title = `Backport (${base}): ${originalTitle}`,
+    head = `backport-${pullRequestNumber}-to-${base}`,
+    title = `[Backport ${base}] ${originalTitle}`,
   } = { body: givenBody, head: givenHead, title: givenTitle };
 
   debug("starting", {

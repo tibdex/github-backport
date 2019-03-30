@@ -19,7 +19,7 @@ const example = async () => {
     // Defaults to: "Backport #{pullRequestNumber}."
     body: givenBody,
     // The name to give to the head branch of the backported pull request.
-    // Defaults to: "backport-{pullRequestNumber}-on-{base}"
+    // Defaults to: "backport-{pullRequestNumber}-to-{base}"
     head: givenHead,
     // An already authenticated instance of https://www.npmjs.com/package/@octokit/rest.
     octokit,
@@ -30,7 +30,7 @@ const example = async () => {
     // The name of the repository.
     repo,
     // The title to give to the backported pull request.
-    // Defaults to: "Backport #{pullRequestNumber} on {base}: {original pull request title}"
+    // Defaults to: "[Backport to {base}] {original pull request title}"
     title: givenTitle,
   });
 };
@@ -80,22 +80,22 @@ and a pull request numbered `#1337` where `dev` is the base branch and `feature`
 To backport `#1337` to `master`, `github-backport` would then take the following steps:
 
 1.  Find out that `#1337` is composed of `8a846f6` and `0d40af8` with [GET /repos/:owner/:repo/pulls/:number/commits](https://developer.github.com/v3/pulls/#list-commits-on-a-pull-request).
-2.  Create a `backport-1337-on-master` branch from `master` with [POST /repos/:owner/:repo/git/refs](https://developer.github.com/v3/git/refs/#create-a-reference).
+2.  Create a `backport-1337-to-master` branch from `master` with [POST /repos/:owner/:repo/git/refs](https://developer.github.com/v3/git/refs/#create-a-reference).
     <!--
-    git checkout -b backport-1337-on-master
+    git checkout -b backport-1337-to-master
     -->
     ```
     * 0d40af8 (feature) D
     * 8a846f6 C
     * b3c3b70 (dev) B
-    * 55356b7 (HEAD -> backport-1337-on-master, master) A
+    * 55356b7 (HEAD -> backport-1337-to-master, master) A
     ```
-3.  Cherry-pick `8a846f6` and `0d40af8` on `backport-1337-on-master` with [`github-cherry-pick`](https://www.npmjs.com/package/github-cherry-pick).
+3.  Cherry-pick `8a846f6` and `0d40af8` to `backport-1337-to-master` with [`github-cherry-pick`](https://www.npmjs.com/package/github-cherry-pick).
     <!--
     git cherry-pick 8a846f6 0d40af8
     -->
     ```
-    * 1ec51e5 (HEAD -> backport-1337-on-master) D
+    * 1ec51e5 (HEAD -> backport-1337-to-master) D
     * e99200a C
     | * 0d40af8 (feature) D
     | * 8a846f6 C
@@ -103,7 +103,7 @@ To backport `#1337` to `master`, `github-backport` would then take the following
     |/
     * 55356b7 (master) A
     ```
-4.  Create a pull request where `master` is the base branch and `backport-1337-on-master` the head branch with [POST /repos/:owner/:repo/pulls](https://developer.github.com/v3/pulls/#create-a-pull-request).
+4.  Create a pull request where `master` is the base branch and `backport-1337-to-master` the head branch with [POST /repos/:owner/:repo/pulls](https://developer.github.com/v3/pulls/#create-a-pull-request).
 
 ## Atomicity
 

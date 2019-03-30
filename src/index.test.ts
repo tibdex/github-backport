@@ -90,7 +90,7 @@ describe("nominal behavior", () => {
       repo,
     });
     givenBody = `Backport #${featurePullRequestNumber}.`;
-    givenTitle = `Backport #${featurePullRequestNumber} on ${givenBase}`;
+    givenTitle = `Backport #${featurePullRequestNumber} to ${givenBase}`;
     backportedPullRequestNumber = await backportPullRequest({
       base: givenBase,
       body: givenBody,
@@ -134,7 +134,7 @@ describe("nominal behavior", () => {
 
   test("head default is respected", () => {
     expect(actualHead).toBe(
-      `backport-${featurePullRequestNumber}-on-${givenBase}`,
+      `backport-${featurePullRequestNumber}-to-${givenBase}`,
     );
   });
 
@@ -215,7 +215,7 @@ describe("atomicity", () => {
   });
 
   test("whole operation aborted when the commits cannot be cherry-picked", async () => {
-    const head = `backport-${featurePullRequestNumber}-on-${
+    const head = `backport-${featurePullRequestNumber}-to-${
       refsDetails.dev.ref
     }`;
 
