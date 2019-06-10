@@ -108,8 +108,8 @@ describe("nominal behavior", () => {
         title: actualTitle,
       },
     } = await octokit.pulls.get({
-      number: backportedPullRequestNumber,
       owner,
+      pull_number: backportedPullRequestNumber,
       repo,
     }));
   }, 30000);
@@ -215,9 +215,7 @@ describe("atomicity", () => {
   });
 
   test("whole operation aborted when the commits cannot be cherry-picked", async () => {
-    const head = `backport-${featurePullRequestNumber}-to-${
-      refsDetails.dev.ref
-    }`;
+    const head = `backport-${featurePullRequestNumber}-to-${refsDetails.dev.ref}`;
 
     const ensureHeadRefExists = () =>
       fetchRefSha({ octokit, owner, ref: head, repo });
