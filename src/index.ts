@@ -44,8 +44,8 @@ const backportPullRequest = async ({
   const {
     data: { title: originalTitle },
   } = await octokit.pulls.get({
-    number: pullRequestNumber,
     owner,
+    pull_number: pullRequestNumber,
     repo,
   });
 
