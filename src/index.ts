@@ -105,11 +105,15 @@ const backportPullRequest = async ({
       debug("commits cherry-picked", headSha);
     } catch (error) {
       debug("commits could not be cherry-picked", error);
-      throw new Error(
+      const newError = new Error(
         `Commits ${JSON.stringify(
           commits,
         )} could not be cherry-picked on top of ${base}`,
       );
+      if(error.name === "HttpError") {
+        newError.httpError = error
+      }
+      throw newError;
     }
     debug("creating pull request");
     const {
