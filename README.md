@@ -6,6 +6,12 @@
 
 See [Backport](https://github.com/tibdex/backport) to backport a pull request by simply commenting it.
 
+# Maintenance update
+
+This library was developed to make [Backport](https://github.com/tibdex/backport) possible before it [became a GitHub Action](https://github.com/tibdex/backport/commit/ce3759ca5d2088e5dcaf6e6e506c92b3995daf61).
+
+[Backport](https://github.com/tibdex/backport) does not need this dependency anymore so this project will stop receiving updates.
+
 # Usage
 
 ```javascript
